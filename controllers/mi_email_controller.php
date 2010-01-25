@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: mi_email_controller.php 1763 2009-11-02 18:07:36Z AD7six $ */
+/* SVN FILE: $Id$ */
 
 /**
  * Short description for emails_controller.php
@@ -19,9 +19,9 @@
  * @package       mi_email
  * @subpackage    mi_email.controllers
  * @since         v 1.0
- * @version       $Revision: 1763 $
- * @modifiedby    $LastChangedBy: AD7six $
- * @lastmodified  $Date: 2009-11-02 19:07:36 +0100 (Mon, 02 Nov 2009) $
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 

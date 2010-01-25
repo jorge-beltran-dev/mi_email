@@ -1,4 +1,4 @@
-<?php /* SVN FILE: $Id: admin_view.ctp 1763 2009-11-02 18:07:36Z AD7six $ */
+<?php /* SVN FILE: $Id$ */
 extract($data);
 $this->set('title_for_layout', $MiEmail['subject']);
 ?>

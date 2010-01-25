@@ -17,9 +17,9 @@
  * @package       mi_email
  * @subpackage    mi_email.models
  * @since         v 1.0
- * @version       $Revision: 1894 $
- * @modifiedby    $LastChangedBy: ad7six $
- * @lastmodified  $Date: 2009-11-22 13:20:46 +0100 (Sun, 22 Nov 2009) $
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 

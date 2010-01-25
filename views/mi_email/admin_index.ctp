@@ -1,4 +1,4 @@
-<?php /* SVN FILE: $Id: admin_index.ctp 1962 2009-12-01 20:59:48Z ad7six $ */ ?>
+<?php /* SVN FILE: $Id$ */ ?>
 <table class="stickyHeader">
 <?php
 $this->set('title_for_layout', __('Emails', true));

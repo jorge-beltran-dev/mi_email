@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: email.php 1771 2009-11-03 00:43:35Z ad7six $ */
+/* SVN FILE: $Id$ */
 
 /**
  * email behavior
@@ -20,9 +20,9 @@
  * @package       base
  * @subpackage    base.models.behaviors
  * @since         v 1.0
- * @version       $Revision: 1771 $
- * @modifiedby    $LastChangedBy: ad7six $
- * @lastmodified  $Date: 2009-11-03 01:43:35 +0100 (Tue, 03 Nov 2009) $
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
