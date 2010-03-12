@@ -204,8 +204,10 @@ class MiEmailController extends MiEmailAppController {
  * @return void
  */
 	public function admin_text_preview($id) {
+		$this->MiEmail->recursive = -1;
 		$data = $this->MiEmail->read(null, $id);
 		$this->data = $data['MiEmail']['data'];
+		$this->_setSelects();
 		header('Content-type: Text');
 		$this->viewPath = 'elements' . DS . 'email' . DS . 'text';
 		$this->set('emailData', $data);
