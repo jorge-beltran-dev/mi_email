@@ -7,7 +7,7 @@
  * The workhorse for the MiEmail model. By using a behavior it is easier to change settings
  * on a per project basis
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * Copyright (c) 2008, Andy Dawson
  *
@@ -37,7 +37,7 @@ class EmailBehavior extends ModelBehavior {
  * @var string 'Email'
  * @access public
  */
-	var $name = 'Email';
+	public $name = 'Email';
 
 /**
  * errors property
@@ -45,7 +45,7 @@ class EmailBehavior extends ModelBehavior {
  * @var array
  * @access public
  */
-	var $errors = array();
+	public $errors = array();
 
 /**
  * defaultSettings property
@@ -53,7 +53,7 @@ class EmailBehavior extends ModelBehavior {
  * @var array
  * @access protected
  */
-	var $_defaultSettings = array(
+	protected $_defaultSettings = array(
 		'autoSend' => true,
 		'charset' => 'utf-8',
 		'delivery' => 'mail',
@@ -74,7 +74,7 @@ class EmailBehavior extends ModelBehavior {
  * @var bool false
  * @access private
  */
-	var $__email = false;
+	private $__email = false;
 
 /**
  * controller property
@@ -84,7 +84,7 @@ class EmailBehavior extends ModelBehavior {
  * @var bool false
  * @access private
  */
-	var $__controller = false;
+	private $__controller = false;
 
 /**
  * setup method
@@ -94,7 +94,7 @@ class EmailBehavior extends ModelBehavior {
  * @return void
  * @access public
  */
-	function setup(&$Model, $config = array()) {
+	public function setup(&$Model, $config = array()) {
 		$this->settings[$Model->alias] = Set::merge($this->_defaultSettings, $config);
 	}
 
@@ -109,7 +109,7 @@ class EmailBehavior extends ModelBehavior {
  * @return void
  * @access public
  */
-	function afterFind(&$Model, $results, $primary = false) {
+	public function afterFind(&$Model, $results, $primary = false) {
 		if (isset($results[0][$Model->alias])) {
 			foreach ($results as $key => $result) {
 				foreach ($result[$Model->alias] as $field => $value) {
@@ -142,7 +142,7 @@ class EmailBehavior extends ModelBehavior {
  * @return void
  * @access public
  */
-	function afterSave(&$Model, $created) {
+	public function afterSave(&$Model, $created) {
 		if ($created || !$this->settings[$Model->alias]['autoSend']) {
 			return;
 		}
@@ -160,7 +160,7 @@ class EmailBehavior extends ModelBehavior {
  * @return void
  * @access public
  */
-	function beforeSave(&$Model) {
+	public function beforeSave(&$Model) {
 		if (!$Model->useTable) {
 			return false;
 		}
@@ -186,7 +186,7 @@ class EmailBehavior extends ModelBehavior {
  * @return void
  * @access public
  */
-	function beforeSend(&$Model) {
+	public function beforeSend(&$Model) {
 		foreach ($Model->data[$Model->alias] as $key => $value) {
 			if (is_string($value) && strlen($value) > 1 && in_array($value[1], array(':', ';'))) {
 				$Model->data[$Model->alias][$key] = unserialize($value);
@@ -226,7 +226,7 @@ class EmailBehavior extends ModelBehavior {
  * @return void
  * @access public
  */
-	function bindUsers(&$Model) {
+	public function bindUsers(&$Model) {
 		$Model->bindModel(array(
 			'belongsTo' => array(
 				'FromUser' => array('className' => 'User', 'foreignKey' => 'from_user_id'),
@@ -246,7 +246,7 @@ class EmailBehavior extends ModelBehavior {
  * @return void
  * @access public
  */
-	function processQueue(&$Model, $status = 'pending', $limit = 0) {
+	public function processQueue(&$Model, $status = 'pending', $limit = 0) {
 		$conditions = array('status' => $status, 'send_date' => '<= ' . date('Y-m-d'));
 		foreach ($Model->find('all', compact('conditions', 'limit')) as $email) {
 			$Model->create($email);
@@ -274,7 +274,7 @@ class EmailBehavior extends ModelBehavior {
  * @return void
  * @access public
  */
-	function purge(&$Model, $type = 'newsletter_copy', $status = 'sent', $date = null, $conditions = array()) {
+	public function purge(&$Model, $type = 'newsletter_copy', $status = 'sent', $date = null, $conditions = array()) {
 		if (is_array($type)) {
 			extract (array_merge(array('type' => 'newsletter_copy'), $type));
 		} else {
@@ -299,7 +299,7 @@ class EmailBehavior extends ModelBehavior {
  * @return void
  * @access public
  */
-	function resend(&$Model, $id) {
+	public function resend(&$Model, $id) {
 		$data = $Model->read(null, $id);
 		if ($data[$Model->alias]['status'] == 'sent') {
 			$Model->create();
@@ -323,7 +323,7 @@ class EmailBehavior extends ModelBehavior {
  * @return void
  * @access public
  */
-	function send(&$Model, $data = null, $status = 'pending') {
+	public function send(&$Model, $data = null, $status = 'pending') {
 		if (isset($data[$Model->alias])) {
 			$Model->data = $data;
 		} else {
@@ -361,7 +361,7 @@ class EmailBehavior extends ModelBehavior {
  * @return void
  * @access private
  */
-	function __send(&$Model, $id = null, $force = false) {
+	private function __send(&$Model, $id = null, $force = false) {
 		if ($Model->data) {
 		} elseif (is_array($id)) {
 			$Model->data =& $id;
@@ -448,7 +448,7 @@ class EmailBehavior extends ModelBehavior {
  * @return void
  * @access private
  */
-	function __defaults(&$Model) {
+	private function __defaults(&$Model) {
 		$domain = substr(env('HTTP_BASE'), 1);
 		if (!$domain) {
 			$domain = APP_DIR;

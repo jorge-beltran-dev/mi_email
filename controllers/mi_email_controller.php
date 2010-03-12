@@ -1,12 +1,10 @@
 <?php
-
-
 /**
  * Short description for emails_controller.php
  *
  * Long description for emails_controller.php
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * Copyright (c) 2008, Andy Dawson
  *
@@ -36,7 +34,7 @@ class MiEmailController extends MiEmailAppController {
  * @var string 'Emails'
  * @access public
  */
-	var $name = 'MiEmail';
+	public $name = 'MiEmail';
 
 /**
  * postActions property
@@ -44,7 +42,7 @@ class MiEmailController extends MiEmailAppController {
  * @var array
  * @access public
  */
-	var $postActions = array(
+	public $postActions = array(
 		'admin_delete',
 		'admin_resend',
 		'admin_status',
@@ -56,7 +54,7 @@ class MiEmailController extends MiEmailAppController {
  * @var string 'MiEmail'
  * @access public
  */
-	var $modelClass = 'MiEmail';
+	public $modelClass = 'MiEmail';
 
 /**
  * uses property
@@ -64,7 +62,7 @@ class MiEmailController extends MiEmailAppController {
  * @var array
  * @access public
  */
-	var $uses = array('MiEmail');
+	public $uses = array('MiEmail');
 
 /**
  * components property
@@ -72,7 +70,7 @@ class MiEmailController extends MiEmailAppController {
  * @var array
  * @access public
  */
-	var $components = array('Email');
+	public $components = array('Email');
 
 /**
  * helpers property
@@ -80,7 +78,7 @@ class MiEmailController extends MiEmailAppController {
  * @var array
  * @access public
  */
-	var $helpers = array('Time');
+	public $helpers = array('Time');
 
 /**
  * paginate property
@@ -88,7 +86,7 @@ class MiEmailController extends MiEmailAppController {
  * @var array
  * @access public
  */
-	var $paginate = array('order' => 'MiEmail.created DESC');
+	public $paginate = array('order' => 'MiEmail.created DESC');
 
 /**
  * beforeFilter method
@@ -98,7 +96,7 @@ class MiEmailController extends MiEmailAppController {
  * @access public
  * @return void
  */
-	function beforeFilter() {
+	public function beforeFilter() {
 		$this->modelClass = 'MiEmail';
 		parent::beforeFilter();
 		if (!empty($this->params['requested'])) {
@@ -129,7 +127,7 @@ class MiEmailController extends MiEmailAppController {
  * @access public
  * @return void
  */
-	function admin_edit($id) {
+	public function admin_edit($id) {
 		if ($this->data) {
 			$file = new File(TMP . rand());
 			$file->write('<?php $this->data["MiEmail"]["data"] = ' . $this->data['MiEmail']['data'] . ';');
@@ -149,7 +147,7 @@ class MiEmailController extends MiEmailAppController {
  * @return void
  * @access public
  */
-	function admin_index() {
+	public function admin_index() {
 		if (isset($this->SwissArmy)) {
 			$conditions = $this->SwissArmy->parseSearchFilter();
 		} else {
@@ -170,7 +168,7 @@ class MiEmailController extends MiEmailAppController {
  * @access public
  * @return void
  */
-	function admin_resend($id) {
+	public function admin_resend($id) {
 		if ($this->MiEmail->resend($id)) {
 			$this->Session->setFlash(sprintf(__('Email with id %1$s resent', true), $id));
 		} else {
@@ -187,7 +185,7 @@ class MiEmailController extends MiEmailAppController {
  * @return void
  * @access public
  */
-	function admin_status($id, $status) {
+	public function admin_status($id, $status) {
 		$this->MiEmail->id = $id;
 		$data = $this->MiEmail->read(null, $id);
 		$this->MiEmail->data['MiEmail']['status'] = $status;
@@ -205,7 +203,7 @@ class MiEmailController extends MiEmailAppController {
  * @access public
  * @return void
  */
-	function admin_text_preview($id) {
+	public function admin_text_preview($id) {
 		$data = $this->MiEmail->read(null, $id);
 		$this->data = $data['MiEmail']['data'];
 		header('Content-type: Text');
@@ -225,7 +223,7 @@ class MiEmailController extends MiEmailAppController {
  * @return void
  * @access public
  */
-	function admin_view($id, $raw = false) {
+	public function admin_view($id, $raw = false) {
 		$this->data = $this->MiEmail->read(null, $id);
 		if(!$this->data) {
 			$this->Session->setFlash(__('Invalid email', true));
@@ -249,7 +247,7 @@ class MiEmailController extends MiEmailAppController {
  * @return void
  * @access public
  */
-	function view($id = null, $slug = null) {
+	public function view($id = null, $slug = null) {
 		$data = $this->MiEmail->read(null, $id);
 		if (!$data) {
 			$this->Session->setFlash(__('email could not be found', true));
@@ -273,7 +271,7 @@ class MiEmailController extends MiEmailAppController {
  * @return void
  * @access public
  */
-	function newsletter($id = null, $slug = null) {
+	public function newsletter($id = null, $slug = null) {
 		$data = $this->MiEmail->find('first', array('conditions' => array('id' => $id, 'type' => 'newsletter')));
 		if (!$data) {
 			$this->Session->setFlash(__('newsletter could not be found', true));
@@ -297,7 +295,7 @@ class MiEmailController extends MiEmailAppController {
  * @return void
  * @access public
  */
-	function send() {
+	public function send() {
 		if (empty($this->params['requested'])) {
 			return $this->redirect($this->referer());
 		}
@@ -320,7 +318,7 @@ class MiEmailController extends MiEmailAppController {
  * @return void
  * @access protected
  */
-	function _setSelects() {
+	protected function _setSelects() {
 		$this->MiEmail->bindUsers();
 		$conditions = array();
 		if ($this->data) {
@@ -338,7 +336,7 @@ class MiEmailController extends MiEmailAppController {
  * @return void
  * @access protected
  */
-	function _view($data) {
+	protected function _view($data) {
 		$this->set('title_for_layout', $data['MiEmail']['subject']);
 		$this->data = $data['MiEmail']['data'];
 		$this->viewPath = 'elements' . DS . 'email' . DS . 'html';

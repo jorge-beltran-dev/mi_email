@@ -4,7 +4,7 @@
  *
  * A model based email solution to allow db events to trigger sending emails
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * Copyright (c) 2008, Andy Dawson
  *
@@ -37,7 +37,7 @@ class MiEmail extends AppModel {
  * @var string 'MiEmail'
  * @access public
  */
-	var $name = 'MiEmail';
+	public $name = 'MiEmail';
 
 /**
  * displayField property
@@ -45,7 +45,7 @@ class MiEmail extends AppModel {
  * @var string 'subject'
  * @access public
  */
-	var $displayField = 'subject';
+	public $displayField = 'subject';
 
 /**
  * useTable variable
@@ -55,7 +55,7 @@ class MiEmail extends AppModel {
  * @var string
  * @access public
  */
-	var $useTable = 'emails';
+	public $useTable = 'emails';
 
 /**
  * actsAs property
@@ -63,12 +63,13 @@ class MiEmail extends AppModel {
  * @var array
  * @access public
  */
-	var $actsAs = array(
+	public $actsAs = array(
 		'MiEmail.Email' => array('sendAs' => 'text'),
 		'Mi.Slugged',
 		'MiEnums.Enum' => array('status', 'type', 'send_as', 'template', 'layout')
 	);
 
+	public $recursive = -1;
 /**
  * construct method
  *
@@ -78,7 +79,7 @@ class MiEmail extends AppModel {
  * @return void
  * @access private
  */
-	function __construct($one = null, $two = null, $three = null) {
+	public function __construct($one = null, $two = null, $three = null) {
 		if (!isProduction()) {
 			$this->actsAs['MiEmail.Email']['delivery'] = 'debug';
 		}
@@ -97,7 +98,7 @@ class MiEmail extends AppModel {
  * @return bool
  * @access public
  */
-	function isAuthorized($user, $controller, $action) {
+	public function isAuthorized($user, $controller, $action) {
 		if ($controller != 'MiEmail' || $action != 'read') {
 			debug('Email model isAuthorized has been called');
 			debug (Debugger::trace());
