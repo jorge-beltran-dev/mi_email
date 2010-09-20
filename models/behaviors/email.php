@@ -397,16 +397,11 @@ class EmailBehavior extends ModelBehavior {
 			$result = true;
 		} else {
 			$this->__email->reset();
-			$this->__email->template = $template;
-			$this->__email->layout = $layout;
-
-			$this->__email->from = $from;
-			$this->__email->to = $to;
-			$this->__email->reply_to = $reply_to;
-			$this->__email->cc = $cc;
-			$this->__email->bcc = $bcc;
-			$this->__email->sendAs = $send_as;
-			$this->__email->subject = $subject;
+			foreach(array('template', 'layout', 'from', 'to', 'reply_to', 'cc', 'bcc', 'send_as', 'subject') as $var) {
+				if (!empty($$var)) {
+					$this->__email->$var = $$var;
+				}
+			}
 
 			$isEmail = true;
 			$emailData = $Model->data;
