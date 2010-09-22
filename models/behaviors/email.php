@@ -1,6 +1,4 @@
 <?php
-
-
 /**
  * email behavior
  *
@@ -407,9 +405,6 @@ class EmailBehavior extends ModelBehavior {
 			$emailData = $Model->data;
 			$data = $Model->data[$Model->alias]['data'];
 			$this->__controller->set(compact('data', 'emailData', 'isEmail'));
-			if (Configure::read() > 2) {
-				$this->__email->delivery = 'debug';
-			}
 			$result = $this->__email->send();
 		}
 		if ($result) {
@@ -426,7 +421,11 @@ class EmailBehavior extends ModelBehavior {
 				$Model->save(array(
 					'subject' => $this->__email->subject,
 					'status' => $result
-				), false, array('subject', 'status'));
+				), array(
+					'validate' => false,
+					'fieldList' => array('subject', 'status'),
+					'callbacks' => false
+				));
 			}
 		} else {
 			$Model->data[$Model->alias]['status'] = $result;
