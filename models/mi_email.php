@@ -23,7 +23,7 @@
  * MiEmail class
  *
  * This class is used to configure the MiEmail behavior (smtp setings etc)
- * and to hanle auth if the standard emails controller is used
+ * and to handle auth if the standard emails controller is used
  *
  * @uses          AppModel
  * @package       mi_email
@@ -100,11 +100,11 @@ class MiEmail extends AppModel {
  */
 	public function isAuthorized($user, $controller, $action) {
 		if ($controller != 'MiEmail' || $action != 'read') {
-			debug('Email model isAuthorized has been called');
-			debug (Debugger::trace());
+			debug('Email model isAuthorized has been called'); //@ignore
+			debug (Debugger::trace()); //@ignore
 			return false;
 		}
-		if ($user['User']['group'] == 'Admin') {
+		if (strtolower($user['User']['group']) == 'admin') {
 			return true;
 		} elseif (!$this->id) {
 			return false;
