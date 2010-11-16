@@ -86,7 +86,7 @@ class MiEmailController extends MiEmailAppController {
  * @var array
  * @access public
  */
-	public $paginate = array('order' => 'MiEmail.created DESC');
+	public $paginate = array('order' => 'MiEmail.modified DESC');
 
 /**
  * beforeFilter method
@@ -110,9 +110,9 @@ class MiEmailController extends MiEmailAppController {
 				$this->Auth->authorize = 'model';
 			}
 			if ($this->Auth->user('id')) {
-				$this->Auth->authError = __('Email web access denied', true);
+				$this->Auth->authError = __d('mi_email', 'Email web access denied', true);
 			} else {
-				$this->Auth->authError = __('Email web access requires login', true);
+				$this->Auth->authError = __d('mi_email', 'Email web access requires login', true);
 			}
 			if (isset($this->params['pass'][0])) {
 				$this->MiEmail->id = $this->params['pass'][0];
@@ -170,9 +170,9 @@ class MiEmailController extends MiEmailAppController {
  */
 	public function admin_resend($id) {
 		if ($this->MiEmail->resend($id)) {
-			$this->Session->setFlash(sprintf(__('Email with id %1$s resent', true), $id));
+			$this->Session->setFlash(sprintf(__d('mi_email', 'Email with id %1$s resent', true), $id));
 		} else {
-			$this->Session->setFlash(__('error sending email', true));
+			$this->Session->setFlash(__d('mi_email', 'error sending email', true));
 		}
 		return $this->_back();
 	}
@@ -207,7 +207,6 @@ class MiEmailController extends MiEmailAppController {
 		$this->MiEmail->recursive = -1;
 		$data = $this->MiEmail->read(null, $id);
 		$this->data = $data['MiEmail']['data'];
-		$this->_setSelects();
 		header('Content-type: Text');
 		$this->viewPath = 'elements' . DS . 'email' . DS . 'text';
 		$this->set('emailData', $data);
@@ -228,7 +227,7 @@ class MiEmailController extends MiEmailAppController {
 	public function admin_view($id, $raw = false) {
 		$this->data = $this->MiEmail->read(null, $id);
 		if(!$this->data) {
-			$this->Session->setFlash(__('Invalid email', true));
+			$this->Session->setFlash(__d('mi_email', 'Invalid email', true));
 			return $this->_back();
 		}
 		if ($raw) {
@@ -252,7 +251,7 @@ class MiEmailController extends MiEmailAppController {
 	public function view($id = null, $slug = null) {
 		$data = $this->MiEmail->read(null, $id);
 		if (!$data) {
-			$this->Session->setFlash(__('email could not be found', true));
+			$this->Session->setFlash(__d('mi_email', 'email could not be found', true));
 			return $this->_back();
 		}
 		if (!$this->params['isAjax']) {
@@ -276,7 +275,7 @@ class MiEmailController extends MiEmailAppController {
 	public function newsletter($id = null, $slug = null) {
 		$data = $this->MiEmail->find('first', array('conditions' => array('id' => $id, 'type' => 'newsletter')));
 		if (!$data) {
-			$this->Session->setFlash(__('newsletter could not be found', true));
+			$this->Session->setFlash(__d('mi_email', 'newsletter could not be found', true));
 			return $this->_back();
 		}
 		$sluggedTitle = $this->MiEmail->slug($data['MiEmail']['subject']);
@@ -315,7 +314,9 @@ class MiEmailController extends MiEmailAppController {
 	}
 
 /**
- * setSelects method
+ * Set a view variable with a list of emails' associated users.
+ *
+ * If $this->data is paginated, set a list of FromUsers and ToUsers.
  *
  * @return void
  * @access protected
@@ -323,12 +324,16 @@ class MiEmailController extends MiEmailAppController {
 	protected function _setSelects() {
 		$this->MiEmail->bindUsers();
 		$conditions = array();
+		$fields = array();
+		if ($this->MiEmail->FromUser->hasField('username')) {
+			$fields = array('FromUser.username');
+		}
 		if ($this->data) {
-			$from = Set::extract($this->data, '/MiEmail/from_user_id');
-			$to = Set::extract($this->data, '/MiEmail/to_user_id');
+			$from = Set::extract('{n}.MiEmail.from_user_id', $this->data);
+			$to = Set::extract('{n}.MiEmail.to_user_id', $this->data);
 			$conditions['FromUser.id'] = array_unique(array_merge($from, $to));
 		}
-		$this->set('users', $this->MiEmail->FromUser->find('list', compact('conditions')));
+		$this->set('users', $this->MiEmail->FromUser->find('list', compact('conditions','fields')));
 	}
 
 /**
