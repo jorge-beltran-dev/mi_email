@@ -1,8 +1,8 @@
 <?php
 /**
- * Short description for emails_controller.php
+ * Short description for mi_email_controller.php
  *
- * Long description for emails_controller.php
+ * Long description for mi_email_controller.php
  *
  * PHP version 5
  *
