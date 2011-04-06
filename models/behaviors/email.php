@@ -245,10 +245,12 @@ class EmailBehavior extends ModelBehavior {
  * @access public
  */
 	public function processQueue(&$Model, $status = 'pending', $limit = 0) {
-		$conditions = array('status' => $status, 'send_date' => '<= ' . date('Y-m-d'));
+		$this->settings[$Model->alias]['autoSend'] = true;
+        $conditions = array('status' => $status);
 		foreach ($Model->find('all', compact('conditions', 'limit')) as $email) {
+			debug($email);
 			$Model->create($email);
-			if ($this->__send($email)) {
+			if ($this->__send($Model, $email)) {
 				$Model->saveField('status', 'sent');
 			}
 		}
@@ -360,7 +362,7 @@ class EmailBehavior extends ModelBehavior {
  * @access private
  */
 	private function __send(&$Model, $id = null, $force = false) {
-		if ($Model->data) {
+		if (!empty($Model->data)) {
 		} elseif (is_array($id)) {
 			$Model->data =& $id;
 			$Model->id = $Model->data[$Model->alias]['id'];
