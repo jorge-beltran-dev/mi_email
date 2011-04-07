@@ -1,0 +1,23 @@
+CREATE TABLE `mi_emails` (
+  `id` char(36) NOT NULL,
+  `from_user_id` char(36) DEFAULT NULL,
+  `to_user_id` char(36) DEFAULT NULL,
+  `parent_id` char(36) DEFAULT NULL,
+  `ip` int(11) DEFAULT NULL,
+  `send_date` date DEFAULT NULL,
+  `status` varchar(30) NOT NULL DEFAULT 'unsent',
+  `type` varchar(10) DEFAULT 'normal',
+  `from` varchar(255) NOT NULL,
+  `to` varchar(255) NOT NULL,
+  `reply_to` varchar(255) NOT NULL,
+  `cc` varchar(255) DEFAULT NULL,
+  `bcc` varchar(255) DEFAULT NULL,
+  `send_as` varchar(4) NOT NULL DEFAULT 'both',
+  `subject` varchar(255) NOT NULL,
+  `template` varchar(255) NOT NULL,
+  `layout` varchar(255) NOT NULL,
+  `data` text NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
