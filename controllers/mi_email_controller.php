@@ -110,9 +110,9 @@ class MiEmailController extends MiEmailAppController {
 				$this->Auth->authorize = 'model';
 			}
 			if ($this->Auth->user('id')) {
-				$this->Auth->authError = __d('mi_email', 'Email web access denied', true);
+				$this->Auth->authError = __d('mi_email', 'Acceso al email desde la web denegado', true);
 			} else {
-				$this->Auth->authError = __d('mi_email', 'Email web access requires login', true);
+				$this->Auth->authError = __d('mi_email', 'El acceso al email requiere autentificación', true);
 			}
 			if (isset($this->params['pass'][0])) {
 				$this->MiEmail->id = $this->params['pass'][0];
@@ -170,9 +170,9 @@ class MiEmailController extends MiEmailAppController {
  */
 	public function admin_resend($id) {
 		if ($this->MiEmail->resend($id)) {
-			$this->Session->setFlash(sprintf(__d('mi_email', 'Email with id %1$s resent', true), $id));
+			$this->Session->setFlash(sprintf(__d('mi_email', 'El email con identificador %1$s ha sido reenviado', true), $id));
 		} else {
-			$this->Session->setFlash(__d('mi_email', 'error sending email', true));
+			$this->Session->setFlash(__d('mi_email', 'Ha ocurrido un error enviando el email', true));
 		}
 		return $this->_back();
 	}
@@ -227,7 +227,7 @@ class MiEmailController extends MiEmailAppController {
 	public function admin_view($id, $raw = false) {
 		$this->data = $this->MiEmail->read(null, $id);
 		if(!$this->data) {
-			$this->Session->setFlash(__d('mi_email', 'Invalid email', true));
+			$this->Session->setFlash(__d('mi_email', 'Email inválido', true));
 			return $this->_back();
 		}
 		if ($raw) {
@@ -251,7 +251,7 @@ class MiEmailController extends MiEmailAppController {
 	public function view($id = null, $slug = null) {
 		$data = $this->MiEmail->read(null, $id);
 		if (!$data) {
-			$this->Session->setFlash(__d('mi_email', 'email could not be found', true));
+			$this->Session->setFlash(__d('mi_email', 'Email no encontrado', true));
 			return $this->_back();
 		}
 		if (!$this->params['isAjax']) {
@@ -275,7 +275,7 @@ class MiEmailController extends MiEmailAppController {
 	public function newsletter($id = null, $slug = null) {
 		$data = $this->MiEmail->find('first', array('conditions' => array('id' => $id, 'type' => 'newsletter')));
 		if (!$data) {
-			$this->Session->setFlash(__d('mi_email', 'newsletter could not be found', true));
+			$this->Session->setFlash(__d('mi_email', 'Newsletter no encontrada', true));
 			return $this->_back();
 		}
 		$sluggedTitle = $this->MiEmail->slug($data['MiEmail']['subject']);
