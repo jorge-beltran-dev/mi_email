@@ -248,11 +248,27 @@ class EmailBehavior extends ModelBehavior {
 		$this->settings[$Model->alias]['autoSend'] = true;
         $conditions = array('status' => $status);
 		foreach ($Model->find('all', compact('conditions', 'limit')) as $email) {
-			debug($email);
 			$Model->create($email);
 			if ($this->__send($Model, $email)) {
 				$Model->saveField('status', 'sent');
 			}
+		}
+	}
+
+/**
+ * sendPending method
+ *
+ * Sends an email saved to the database as pending
+ *
+ * @param mixed $Model
+ * @param string $id
+ */
+	public function sendPending(&$Model, $id) {
+		$this->settings[$Model->alias]['autoSend'] = true;
+        $email = $Model->findById($id);
+		$Model->create($email);
+		if ($this->__send($Model, $email)) {
+			$Model->saveField('status', 'sent');
 		}
 	}
 
