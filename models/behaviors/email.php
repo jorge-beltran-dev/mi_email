@@ -169,8 +169,8 @@ class EmailBehavior extends ModelBehavior {
 			}
 		}
 		if (!$Model->id) {
-			App::import('Component', 'RequestHandler');
-			$Model->data[$Model->alias]['ip'] = ip2long(RequestHandlerComponent::getClientIp());
+			App::uses('CakeRequest', 'Utility');
+			$Model->data[$Model->alias]['ip'] = ip2long(CakeRequest::clientIp());
 		}
 		return true;
 	}
@@ -197,18 +197,15 @@ class EmailBehavior extends ModelBehavior {
 				App::import('Core', 'Controller');
 				$this->__controller = new Controller();
 				if (!isset($this->__controller->Session)) {
-					App::import('Component', 'Session');
-					$this->__controller->Session = new SessionComponent();
+					App::uses('SessionComponent', 'Component'); 
+					$this->__controller->Session = new SessionComponent(new ComponentCollection());
 				}
 				if (App::import('View', 'Mi.Mi')) {
 					$this->__controller->view = 'Mi.Mi';
 				}
-				App::import('Component', 'Email');
-				$this->__controller->Email = new EmailComponent();
-				$this->__email =& $this->__controller->Email;
-				$this->__email->initialize($this->__controller);
-				$this->__email->startup($this->__controller);
-				ClassRegistry::addObject('EmailComponent', $this->__email);
+				App::uses('CakeEmail', 'Network/Email'); 
+				$this->__email = new CakeEmail();
+				ClassRegistry::addObject('CakeEmail', $this->__email);
 			}
 			foreach($this->settings[$Model->alias] as $key => $val) {
 				$this->__email->$key = $val;
@@ -344,6 +341,7 @@ class EmailBehavior extends ModelBehavior {
 			$Model->data = $data;
 		} else {
 			$Model->data = array($Model->alias => $data);
+			$data[$Model->alias] = $data;	
 		}
 		$dbReturn = $return = false;
 		if ($Model->useTable) {
@@ -353,12 +351,17 @@ class EmailBehavior extends ModelBehavior {
 				$Model->data[$Model->alias]['subject'] = __d('email_subjects',  $_subject, true);
 			}
 			$merge[$Model->alias]['status'] = $status;
-			if ($Model->save(array_merge($merge, $data))) {
+			$_save = array_merge($merge, $data);
+			$_save = $_save[$Model->alias];
+			$Model->create();
+			if ($Model->save($_save)) {	
 				$dbReturn = true;
 			} else {
 				$this->errors[] = 'not possible to save to db';
 			}
+		
 		}
+		
 		if ($this->settings[$Model->alias]['autoSend'] && !isset($Model->data[$Model->alias]['send_date']) && $status == 'pending') {
 			$return = $this->__send($Model);
 		}
@@ -377,7 +380,7 @@ class EmailBehavior extends ModelBehavior {
  * @return void
  * @access private
  */
-	private function __send(&$Model, $id = null, $force = false) {
+	private function __send(&$Model, $id = null, $force = false) {	
 		if (!empty($Model->data)) {
 		} elseif (is_array($id)) {
 			$Model->data =& $id;
@@ -389,12 +392,14 @@ class EmailBehavior extends ModelBehavior {
 		} else {
 			return false;
 		}
+
 		extract($Model->data[$Model->alias]);
 		if (empty($subject)) {
 			$_subject = Inflector::humanize(Inflector::underscore(str_replace('/', ' ', $template)));
 			$subject = __d('email_subjects',  $_subject, true);
 		}
 		$Model->data[$Model->alias]['data']['id'] = $Model->id;
+		
 		if (!$Model->beforeSend()) {
 			if ($Model->id) {
 				$Model->saveField('status', 'dataProblem');
@@ -403,41 +408,53 @@ class EmailBehavior extends ModelBehavior {
 			}
 			return false;
 		}
+		
 		if (isset($status) && $status == 'sent' && !$force) {
 			$this->errors[] = 'Email already sent';
 			return false;
 		}
+		
 		if ($this->settings[$Model->alias]['behaviorMode'] === 'requestAction') {
 			$data = compact('template', 'layout', 'from' , 'to', 'reply_to', 'cc', 'bcc', 'send_as', 'subject', 'data');
 			$this->requestAction(array('plugin' => false, 'controller' => 'emails', 'action' => 'send'), array('data' => $data));
 			$result = true;
 		} else {
 			$this->__email->reset();
-			foreach(array('template', 'layout', 'from', 'to', 'reply_to', 'cc', 'bcc', 'send_as', 'subject') as $var) {
+
+			if (!empty($layout)) {
+				$this->__email->layout = $layout;
+			}
+			if (!empty($this->settings[$Model->alias]['delivery'])) {
+				$this->__email->transport(Inflector::classify($this->settings[$Model->alias]['delivery']));
+			}
+
+			foreach(array('template', 'from', 'to', 'sender', 'replyTo', 'cc', 'bcc', 'subject') as $var) {				
 				if (!empty($$var)) {
-					$this->__email->$var = $$var;
+					$this->__email->{$var}($$var);
 				}
 			}
 
 			$isEmail = true;
 			$emailData = $Model->data;
 			$data = $Model->data[$Model->alias]['data'];
-			$this->__controller->set(compact('data', 'emailData', 'isEmail'));
+			$this->__email->viewVars(compact('data', 'emailData', 'isEmail'));
 			$result = $this->__email->send();
+			
 		}
 		if ($result) {
 			$result = 'sent';
 		} else {
 			$result = 'sendError';
 		}
+
 		if ($id) {
 			if (is_array($id)) {
 				$id[$Model->alias]['status'] = $result;
-				$id[$Model->alias]['subject'] = $this->__email->subject;
+				$id[$Model->alias]['subject'] = $this->__email->subject();
 			} else {
 				$Model->id = $id;
 				$Model->save(array(
-					'subject' => $this->__email->subject,
+					'subject' => $this->__email->subject(),
 					'status' => $result
 				), array(
 					'validate' => false,
