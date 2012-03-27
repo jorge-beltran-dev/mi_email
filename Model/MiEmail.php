@@ -29,7 +29,7 @@
  * @package       mi_email
  * @subpackage    mi_email.models
  */
-class MiEmail extends AppModel {
+class MiEmail extends MiEmailAppModel {
 
 /**
  * name property

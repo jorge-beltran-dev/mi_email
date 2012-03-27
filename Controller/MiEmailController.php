@@ -62,7 +62,7 @@ class MiEmailController extends MiEmailAppController {
  * @var array
  * @access public
  */
-	public $uses = array('MiEmail');
+	public $uses = array('MiEmail.MiEmail');
 
 /**
  * components property
@@ -106,7 +106,7 @@ class MiEmailController extends MiEmailAppController {
 			$this->MiEmail->recursive = 0;
 		} elseif(isset($this->Auth)) {
 			$this->Auth->allow = array('newsletter');
-			if (in_array(low($this->action), array('view', 'read'))) {
+			if (in_array(strtolower($this->action), array('view', 'read'))) {
 				$this->Auth->authorize = 'model';
 			}
 			if ($this->Auth->user('id')) {
@@ -346,7 +346,7 @@ class MiEmailController extends MiEmailAppController {
 	protected function _view($data) {
 		$this->set('title_for_layout', $data['MiEmail']['subject']);
 		$this->data = $data['MiEmail']['data'];
-		$this->viewPath = 'elements' . DS . 'email' . DS . 'html';
+		$this->viewPath = 'Emails' . DS . 'html';
 		$this->set('emailData', $data);
 		$this->set('isEmail', 'web');
 		if ($this->params['isAjax']) {

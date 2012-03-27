@@ -56,7 +56,7 @@ class EmailBehavior extends ModelBehavior {
 		'charset' => 'utf-8',
 		'delivery' => 'mail',
 		'sendAs' => 'both',
-		'smtpOptions' => array('port'=> 25, 'host' => 'localhost', 'timeout' => 30,
+		'config' => array('port'=> 25, 'host' => 'localhost', 'timeout' => 30,
 			'username' => '', 'password' => ''),
 		'xMailer' => 'CakePHP Email Component',
 		'bcc' => array(),
@@ -426,6 +426,9 @@ class EmailBehavior extends ModelBehavior {
 			}
 			if (!empty($this->settings[$Model->alias]['delivery'])) {
 				$this->__email->transport(Inflector::classify($this->settings[$Model->alias]['delivery']));
+				if (!empty($this->settings[$Model->alias]['config'])) {
+					$this->__email->transportClass()->config($this->settings[$Model->alias]['config']);
+				}
 			}
 
 			foreach(array('template', 'from', 'to', 'sender', 'replyTo', 'cc', 'bcc', 'subject') as $var) {				
