@@ -440,6 +440,7 @@ class EmailBehavior extends ModelBehavior {
 			$isEmail = true;
 			$emailData = $Model->data;
 			$data = $Model->data[$Model->alias]['data'];
+			$this->__email->emailFormat($Model->data[$Model->alias]['send_as']);
 			$this->__email->viewVars(compact('data', 'emailData', 'isEmail'));
 			$result = $this->__email->send();
 			
